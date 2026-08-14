@@ -1,0 +1,54 @@
+from telegram import Update
+from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters, ContextTypes
+import asyncio
+import random
+
+TOKEN = "8936280203:AAHIFtgvaNrY1hat6tx_uPc7fQaVCG5wUro"
+
+# AI maari pesura replies
+AI_REPLIES = [
+    "Aama bro sollu enna venum? 😎",
+    "Naan kekuren, neenga sollunga 🔥",
+    "Adhu nalla kelvi bro. Enaku theriyala aana naan try panren",
+    "Haha seri da. Vera enna vishayam?",
+    "Naan oru bot dhan, aana friend mathiri pesuven 💪"
+]
+
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await context.bot.send_message(chat_id=update.effective_chat.id,
+    text="🔥 MYFFGUILD AI BOT 🔥\nEnakitu ethuvum pesalam da\n/glory UID - FF check\n/song Name - Song link\nRules normal ah pesuna naan reply panuven")
+
+async def glory(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if len(context.args) == 0:
+        await context.bot.send_message(chat_id=update.effective_chat.id, text="Use: /glory 123456789")
+        return
+    uid = context.args[0]
+    await context.bot.send_message(chat_id=update.effective_chat.id, text=f"UID {uid} glory check panren...")
+    await asyncio.sleep(1)
+    await context.bot.send_message(chat_id=update.effective_chat.id,
+    text=f"🔥 UID: {uid}\n👤 Name: Player{uid[-4:]}\n🏆 Glory: 52341\n⭐ Level: 68")
+
+async def song(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if len(context.args) == 0:
+        await context.bot.send_message(chat_id=update.effective_chat.id, text="Use: /song Anirudh")
+        return
+    song_name = " ".join(context.args)
+    await context.bot.send_message(chat_id=update.effective_chat.id,
+    text=f"🎵 {song_name}\nYouTube: https://youtube.com/results?search_query={song_name}")
+
+# IDHU DHAN AI COMMAND
+async def ai_chat(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user_text = update.message.text
+    reply = random.choice(AI_REPLIES)
+    await context.bot.send_message(chat_id=update.effective_chat.id,
+    text=f"Bot: {reply}")
+
+app = ApplicationBuilder().token(TOKEN).build()
+
+app.add_handler(CommandHandler("start", start))
+app.add_handler(CommandHandler("glory", glory))
+app.add_handler(CommandHandler("song", song))
+app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, ai_chat)) # Text vandha AI reply
+
+print("AI Bot is running...")
+app.run_polling()
